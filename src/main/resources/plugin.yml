@@ -1,0 +1,28 @@
+name: PvPGames
+main: com.gmail.filoghost.pvpgames.PvPGames
+version: 1.0
+
+softdepend: [WildCommons, WildChat, Cosmetics, HolographicMobs, HolographicDisplays, NametagChanger]
+
+commands:
+   spawn:
+      description: Torna allo spawn.
+   pvpgames:
+      description: Comandi admin.
+   fix:
+      description: Fix.
+   spectator:
+      description: Comando per diventare spettatore.
+      aliases: [sp, spect, spett, spettatore]
+   go:
+      description: Vai da un giocatore.
+   mode:
+      description: Comando per cambiare modalità.
+   modes:
+      description: Comando per vedere le modalità.
+   classifica:
+      description: Comando per vedere le classifiche.
+   stats:
+      description: Comando per vedere le statistiche.
+   quit:
+      description: Comando per uscire da una modalità.
