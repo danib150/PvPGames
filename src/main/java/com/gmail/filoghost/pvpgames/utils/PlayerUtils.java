@@ -153,10 +153,6 @@ public class PlayerUtils {
 		}
 	}
 	
-	public static boolean isShield(ItemStack itemStack) {
-		return itemStack.getType() == Material.SHIELD;
-	}
-	
 	public static Player getRealDamager(EntityDamageEvent event) {
 		return event instanceof EntityDamageByEntityEvent ? getRealDamager((EntityDamageByEntityEvent) event) : null;
 	}

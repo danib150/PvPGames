@@ -213,9 +213,9 @@ public class EntityListener implements Listener {
 			return;
 		}
 	}
-	
+
 	private boolean isPotion(Material type) {
-		return type == Material.POTION || type == Material.SPLASH_POTION || type == Material.LINGERING_POTION;
+		return type == Material.POTION;
 	}
 
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.LOWEST)

@@ -71,7 +71,7 @@ public class SpectatorCommand extends CommandFramework implements SilentCommandH
 			}
 			pvpGamer.setStatus(Status.SPECTATOR, false, true, true);
 			pvpGamer.sendMessage(ChatColor.GREEN + "Ora sei uno spettatore!");
-			EasySound.quickPlay(pvpGamer.getPlayer(), Sound.BLOCK_NOTE_PLING, 1.5f);
+			EasySound.quickPlay(pvpGamer.getPlayer(), Sound.NOTE_PLING, 1.5f);
 		}
 		
 	}

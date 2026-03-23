@@ -164,14 +164,12 @@ public class SignListener implements Listener {
 				return false;
 		}
 	}
-	
+
 	public static boolean isPortal(Material mat) {
-		switch(mat) {
-			case ENDER_PORTAL:
-			case END_GATEWAY:
-				return true;
-			default:
-				return false;
-		}
+        return switch (mat) {        // Nether portal
+            case PORTAL, ENDER_PORTAL ->  // End portal
+                    true;
+            default -> false;
+        };
 	}
 }

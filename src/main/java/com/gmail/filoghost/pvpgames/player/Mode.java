@@ -39,13 +39,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import com.gmail.filoghost.holographicmobs.api.ClickHandler;
-import com.gmail.filoghost.holographicmobs.object.types.HologramSkeleton;
-import com.gmail.filoghost.holographicmobs.object.types.HologramSlime;
 import com.gmail.filoghost.pvpgames.PvPGames;
 import com.gmail.filoghost.pvpgames.bridge.MobStatue;
 import com.gmail.filoghost.pvpgames.files.Serializer;
@@ -102,27 +100,23 @@ public class Mode {
 		
 		oneShotProjectile = section.getBoolean("one-shot.projectile");
 		oneShotMelee = section.getBoolean("one-shot.melee");
-		
+
 		joinMob = new MobStatue();
-		joinMob.setType(HologramSkeleton.class);
+		joinMob.setType(EntityType.SKELETON);
 		joinMob.setHologramLines(Arrays.asList(
-				WildCommons.color(PvPGames.getSettings().statues_modeCustomName).replace("[NAME]", name).replace("[ID]", id).split(Pattern.quote("\\n"))
-				));
-		
-		joinMob.setClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(Player player) {
-				PvPGames.getModeCommand().execute(player, new String[] {Mode.this.name});
-			}
-		});
-		
+				WildCommons.color(PvPGames.getSettings().statues_modeCustomName)
+						.replace("[NAME]", name)
+						.replace("[ID]", id)
+						.split(Pattern.quote("\\n"))
+		));
+
+		joinMob.setClickHandler(player -> PvPGames.getModeCommand().execute(player, new String[] {Mode.this.name}));
+
 		quitMob = new MobStatue();
-		quitMob.setType(HologramSlime.class);
-		quitMob.setHologramLines(Arrays.asList("" + ChatColor.RED + ChatColor.BOLD + "Cambia modalità"));
-		
-		quitMob.setClickHandler(new ClickHandler() {
-			
+		quitMob.setType(EntityType.SLIME);
+		quitMob.setHologramLines(List.of("" + ChatColor.RED + ChatColor.BOLD + "Cambia modalità"));
+
+		quitMob.setClickHandler(new MobStatue.ClickHandler() {
 			@Override
 			public void onClick(Player player) {
 				PvPGames.getQuitCommand().execute(player, new String[0]);
@@ -405,11 +399,6 @@ public class Mode {
 	
 	public void updateQuitMob() {
 		quitMob.update();
-		
-		if (quitMob.getMob() instanceof HologramSlime) {
-			((HologramSlime) quitMob.getMob()).setSize(1);
-			quitMob.getMob().update();
-		}
 	}
 	
 	@Getter

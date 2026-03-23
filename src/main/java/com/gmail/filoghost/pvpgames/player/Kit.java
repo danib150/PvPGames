@@ -28,26 +28,6 @@
  */
 package com.gmail.filoghost.pvpgames.player;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionType;
-
-import com.gmail.filoghost.holographicmobs.api.ClickHandler;
-import com.gmail.filoghost.holographicmobs.object.HologramEquippable;
-import com.gmail.filoghost.holographicmobs.object.types.HologramZombie;
 import com.gmail.filoghost.pvpgames.Perms;
 import com.gmail.filoghost.pvpgames.PvPGames;
 import com.gmail.filoghost.pvpgames.bridge.MobStatue;
@@ -58,10 +38,23 @@ import com.gmail.filoghost.pvpgames.utils.ItemAndPosition;
 import com.gmail.filoghost.pvpgames.utils.ItemStackWrapper;
 import com.gmail.filoghost.pvpgames.utils.PlayerUtils;
 import com.google.common.collect.Lists;
-
 import lombok.Getter;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionType;
 import wild.api.WildCommons;
-import wild.api.bridges.CosmeticsBridge;
 import wild.api.config.PluginConfig;
 import wild.api.item.ItemBuilder;
 import wild.api.item.parsing.ItemParser;
@@ -72,6 +65,10 @@ import wild.api.menu.Icon;
 import wild.api.menu.IconMenu;
 import wild.api.menu.StaticIcon;
 import wild.api.sound.EasySound;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Kit {
 	
@@ -93,77 +90,71 @@ public class Kit {
 	
 
 	public Kit(PluginConfig config) {
-		statue = new MobStatue();
-		statue.setType(HologramZombie.class);
-		statue.setHologramLines(new ArrayList<String>());
-		statue.setClickHandler(new ClickHandler() {
+		statue.setType(EntityType.ZOMBIE);
+		statue.setHologramLines(new ArrayList<>());
+		statue.setClickHandler(player -> {
+            PvPGamer gamer = PvPGames.getPvPGamer(player);
 
-			@Override
-			public void onClick(Player player) {
-				PvPGamer gamer = PvPGames.getPvPGamer(player);
-					
-				if (gamer.getStatus() != Status.GAMER) {
-					gamer.sendMessage(ChatColor.RED + "Gli spettatori non possono scegliere kit.");
-					return;
-				}
-					
-				if (gamer.getMode() == null) {
-					gamer.sendMessage(ChatColor.RED + "Devi scegliere una modalità prima di scegliere un kit.");
-					return;
-				}
-					
-				if (!gamer.getMode().getId().equalsIgnoreCase(mode)) {
-					gamer.sendMessage(ChatColor.RED + "Non puoi scegliere questo kit nella modalità " + gamer.getMode().getName() + ".");
-					return;
-				}
-				
-				if (requiredLevel > 0 && gamer.getLevel() < requiredLevel) {
-					EasySound.quickPlay(player, Sound.BLOCK_NOTE_BASS);
-					gamer.sendMessage(ChatColor.RED + "Devi essere almeno livello " + requiredLevel + " per questo kit.");
-					return;
-				}
+            if (gamer.getStatus() != Status.GAMER) {
+                gamer.sendMessage(ChatColor.RED + "Gli spettatori non possono scegliere kit.");
+                return;
+            }
 
-				if (vipOnly && !player.hasPermission(Perms.VIP)) {
-					EasySound.quickPlay(player, Sound.BLOCK_NOTE_BASS);
-					gamer.sendMessage(ChatColor.RED + "Solo i VIP possono usare questo kit.");
-					return;
-				}
-					
-				if (gamer.getKit() != null && gamer.getKit() == Kit.this) {
-					gamer.sendMessage(ChatColor.RED + "Hai già questo kit.");
-					return;
-				}
-				
-				if (gamer.getKit() != null && gamer.isPaidForKit()) {
-					gamer.sendMessage(ChatColor.RED + "Hai già comprato un kit a pagamento.");
-					return;
-				}
-				
-				gamer.setPaidForKit(false);
-				
-				if (gamer.getMode().isEnableCoins() && coins > 0) {
-					if (player.hasPermission(Perms.BYPASS_COINS)) {
-						player.sendMessage(ChatColor.GRAY + "Hai bypassato il costo in Coins.");
-					} else {
-						if (gamer.getCoins().get() < coins) {
-							EasySound.quickPlay(player, Sound.BLOCK_NOTE_BASS);
-							gamer.sendMessage(ChatColor.RED + "Non hai abbastanza Coins per questo kit.");
-							return;
-						}
-						
-						gamer.detractCoins(coins);
-						player.sendMessage(ChatColor.GOLD + "Hai speso " + coins + " Coins.");
-						gamer.setPaidForKit(true);
-					}
-				}
-					
-				gamer.setKit(Kit.this);
-				player.sendMessage(ChatColor.GRAY + "Hai scelto il kit " + ChatColor.YELLOW + ChatColor.BOLD + Kit.this.name + ChatColor.GRAY + ".");
-				EasySound.quickPlay(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.4f);
-				apply(gamer);
-			}
-		});
-		
+            if (gamer.getMode() == null) {
+                gamer.sendMessage(ChatColor.RED + "Devi scegliere una modalità prima di scegliere un kit.");
+                return;
+            }
+
+            if (!gamer.getMode().getId().equalsIgnoreCase(mode)) {
+                gamer.sendMessage(ChatColor.RED + "Non puoi scegliere questo kit nella modalità " + gamer.getMode().getName() + ".");
+                return;
+            }
+
+            if (requiredLevel > 0 && gamer.getLevel() < requiredLevel) {
+                EasySound.quickPlay(player, Sound.NOTE_BASS);
+                gamer.sendMessage(ChatColor.RED + "Devi essere almeno livello " + requiredLevel + " per questo kit.");
+                return;
+            }
+
+            if (vipOnly && !player.hasPermission(Perms.VIP)) {
+                EasySound.quickPlay(player, Sound.NOTE_BASS);
+                gamer.sendMessage(ChatColor.RED + "Solo i VIP possono usare questo kit.");
+                return;
+            }
+
+            if (gamer.getKit() != null && gamer.getKit() == Kit.this) {
+                gamer.sendMessage(ChatColor.RED + "Hai già questo kit.");
+                return;
+            }
+
+            if (gamer.getKit() != null && gamer.isPaidForKit()) {
+                gamer.sendMessage(ChatColor.RED + "Hai già comprato un kit a pagamento.");
+                return;
+            }
+
+            gamer.setPaidForKit(false);
+
+            if (gamer.getMode().isEnableCoins() && coins > 0) {
+                if (player.hasPermission(Perms.BYPASS_COINS)) {
+                    player.sendMessage(ChatColor.GRAY + "Hai bypassato il costo in Coins.");
+                } else {
+                    if (gamer.getCoins().get() < coins) {
+                        EasySound.quickPlay(player, Sound.NOTE_BASS);
+                        gamer.sendMessage(ChatColor.RED + "Non hai abbastanza Coins per questo kit.");
+                        return;
+                    }
+
+                    gamer.detractCoins(coins);
+                    player.sendMessage(ChatColor.GOLD + "Hai speso " + coins + " Coins.");
+                    gamer.setPaidForKit(true);
+                }
+            }
+
+            gamer.setKit(Kit.this);
+            player.sendMessage(ChatColor.GRAY + "Hai scelto il kit " + ChatColor.YELLOW + ChatColor.BOLD + Kit.this.name + ChatColor.GRAY + ".");
+            EasySound.quickPlay(player, Sound.ORB_PICKUP, 1.4f);
+            apply(gamer);
+        });
 		this.yaml = config;
 
 		id = config.getString("id");
@@ -255,8 +246,6 @@ public class Kit {
 					leggings = item;
 				} else if (PlayerUtils.isBoots(item) && boots == null) {
 					boots = item;
-				} else if (PlayerUtils.isShield(item) && shield == null) {
-					shield = item;
 				} else {
 					
 					if (item.getAmount() > item.getMaxStackSize() && !itemWrapper.isForceStacking()) {
@@ -316,32 +305,42 @@ public class Kit {
 		showcaseMenu = new IconMenu("Kit " + name, rows);
 		
 		int index = 0;
-		
+
 		for (PotionEffect potionEffect : iconMenuPotionEffects) {
 			ItemStack potionItem = ItemBuilder.of(Material.POTION)
 					.name(ChatColor.LIGHT_PURPLE + Format.formatEffectName(potionEffect))
 					.lore(ChatColor.GRAY + Format.formatEffectDuration(potionEffect))
 					.amount(potionEffect.getAmplifier() + 1)
 					.build();
-			
-			PotionMeta meta = (PotionMeta) potionItem.getItemMeta();
-			
+
 			PotionType potionType = null;
 			for (PotionType test : PotionType.values()) {
-				if (potionEffect.getType().equals(test.getEffectType())) {
+				if (test.getEffectType() != null && test.getEffectType().equals(potionEffect.getType())) {
 					potionType = test;
+					break;
 				}
 			}
+
+			// Fallback per effetti senza una vera pozione vanilla associata
 			if (potionType == null) {
-				potionType = PotionType.INVISIBILITY; // Alcuni effetti non hanno pozioni, e quindi non sono visualizzabili, usiamo un colore grigio
+				potionType = PotionType.WATER;
 			}
-			meta.setBasePotionData(new PotionData(potionType));
-			potionItem.setItemMeta(meta);
-			
+
+			// API 1.8.8
+			Potion potion = new Potion(potionType);
+			potion.apply(potionItem);
+
+			PotionMeta meta = (PotionMeta) potionItem.getItemMeta();
+			if (meta != null) {
+				meta.setMainEffect(potionEffect.getType()); // opzionale, ma utile in 1.8.x
+				potionItem.setItemMeta(meta);
+			}
+
 			Icon potionIcon = new StaticIcon(potionItem, true);
 			showcaseMenu.setIconRaw(index, potionIcon);
 			index++;
 		}
+
 		index = nextMenuLine(index); // Nuova riga se sono state messe delle pozioni
 		
 		if (helmet != null) {
@@ -432,8 +431,6 @@ public class Kit {
 			case CHAINMAIL_BOOTS:
 			case BOW:
 			case FISHING_ROD:
-			case SHIELD:
-				return true;
 			default:
 				return false;
 		}
@@ -445,7 +442,6 @@ public class Kit {
 		
 		WildCommons.removePotionEffects(player);
 		WildCommons.clearInventoryFully(player);
-		CosmeticsBridge.updateCosmetics(player, CosmeticsBridge.Status.GAME); // Per essere in game, serve per forza un kit
 		PlayerInventory inv = player.getInventory();
 		
 		if (helmet != null) {
@@ -462,10 +458,6 @@ public class Kit {
 		
 		if (boots != null) {
 			inv.setBoots(boots);
-		}
-		
-		if (shield != null) {
-			inv.setItemInOffHand(shield);
 		}
 		
 		if (savedKitPosition != null && savedKitPosition.getInventoryPositions().size() == items.size()) {
@@ -519,9 +511,9 @@ public class Kit {
 		yaml.set("display-location", Serializer.locationToString(loc));
 		yaml.save();
 	}
-	
+
 	public void updateDisplayMob() {
-		
+
 		statue.getHologramLines().clear();
 		statue.getHologramLines().add("" + ChatColor.YELLOW + ChatColor.BOLD + name + (vipOnly ? " §8§l[§6§lVIP§8§l]" : ""));
 		if (requiredLevel > 0) {
@@ -530,33 +522,28 @@ public class Kit {
 		if (coins > 0) {
 			statue.getHologramLines().add(ChatColor.WHITE + "Prezzo: " + coins + " Coins");
 		}
-		
+
 		statue.update();
-		
-		if (statue.getMob() instanceof HologramEquippable) {
-			
-			HologramEquippable hologramMob = (HologramEquippable) statue.getMob();
-			
-			if (!items.isEmpty()) {
-				hologramMob.setItemInHand(items.get(0).getItem());
+
+		if (statue.getMob() != null && statue.getMob().getEntity() instanceof LivingEntity entity) {
+
+            EntityEquipment equipment = entity.getEquipment();
+
+			if (equipment != null) {
+				if (!items.isEmpty()) {
+					equipment.setItemInHand(items.getFirst().getItem());
+				} else {
+					equipment.setItemInHand(null);
+				}
+
+				equipment.setHelmet(helmet);
+				equipment.setChestplate(chestplate);
+				equipment.setLeggings(leggings);
+				equipment.setBoots(boots);
+
+				// In 1.8.8 non esiste l'offhand, quindi shield non si può mostrare lì.
+				// Se vuoi, puoi ignorarlo oppure usarlo come item in hand quando non ci sono item.
 			}
-			if (helmet != null) {
-				hologramMob.setHelmet(helmet);
-			}
-			if (chestplate != null) {
-				hologramMob.setChestplate(chestplate);
-			}
-			if (leggings != null) {
-				hologramMob.setLeggings(leggings);
-			}
-			if (boots != null) {
-				hologramMob.setBoots(boots);
-			}
-			if (shield != null) {
-				hologramMob.setItemInOffHand(shield);
-			}
-			
-			hologramMob.update();
 		}
 	}
 

@@ -128,7 +128,7 @@ public class TeleporterMenu {
 						@Override
 						public void onClick(Player player) {
 							if (followingPage < teleporterMenus.size()) {
-								EasySound.quickPlay(player, Sound.UI_BUTTON_CLICK, 1.6f, 0.5f);
+								EasySound.quickPlay(player, Sound.CLICK, 1.6f, 0.5f);
 								teleporterMenus.get(followingPage).open(player);
 							}
 						}
@@ -141,7 +141,7 @@ public class TeleporterMenu {
 						@Override
 						public void onClick(Player player) {
 							if (previousPage < teleporterMenus.size()) {
-								EasySound.quickPlay(player, Sound.UI_BUTTON_CLICK, 1.6f, 0.5f);
+								EasySound.quickPlay(player, Sound.CLICK, 1.6f, 0.5f);
 								teleporterMenus.get(previousPage).open(player);
 							}
 						}
@@ -155,7 +155,7 @@ public class TeleporterMenu {
 						@Override
 						public void onClick(Player player) {
 							if (previousPage < teleporterMenus.size()) {
-								EasySound.quickPlay(player, Sound.UI_BUTTON_CLICK, 1.6f, 0.5f);
+								EasySound.quickPlay(player, Sound.CLICK, 1.6f, 0.5f);
 								teleporterMenus.get(previousPage).open(player);
 							}
 						}
@@ -166,7 +166,7 @@ public class TeleporterMenu {
 						@Override
 						public void onClick(Player player) {
 							if (followingPage < teleporterMenus.size()) {
-								EasySound.quickPlay(player, Sound.UI_BUTTON_CLICK, 1.6f, 0.5f);
+								EasySound.quickPlay(player, Sound.CLICK, 1.6f, 0.5f);
 								teleporterMenus.get(followingPage).open(player);
 							}
 						}

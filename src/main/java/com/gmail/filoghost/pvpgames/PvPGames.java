@@ -31,9 +31,12 @@ package com.gmail.filoghost.pvpgames;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.gmail.filoghost.boosters.bridges.BoostersBridge;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -45,8 +48,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.placeholder.PlaceholderReplacer;
 import com.gmail.filoghost.pvpgames.commands.ClassificaCommand;
 import com.gmail.filoghost.pvpgames.commands.FixCommand;
 import com.gmail.filoghost.pvpgames.commands.GoCommand;
@@ -91,7 +92,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.cubespace.yamler.YamlerConfigurationException;
 import wild.api.WildCommons;
-import wild.api.bridges.BoostersBridge;
 import wild.api.config.PluginConfig;
 import wild.api.item.BookTutorial;
 import wild.api.util.CaseInsensitiveMap;
@@ -117,7 +117,11 @@ public class PvPGames extends JavaPlugin {
 	@Getter	private static SpawnCommand spawnCommand;
 	@Getter	private static QuitCommand quitCommand;
 	@Getter	private static ModeCommand modeCommand;
-	
+
+	@Getter private HolographicDisplaysAPI holographicDisplaysAPI;
+
+	private final Map<String, Mode> modesById = new HashMap<>();
+
 	@Override
 	public void onEnable() {
 		if (!Bukkit.getPluginManager().isPluginEnabled("WildCommons")) {
@@ -130,16 +134,16 @@ public class PvPGames extends JavaPlugin {
 		}
 		
 		instance = this;
-		
-		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicMobs")) {
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + this.getName() + "] Richiesto HolographicMobs!");
+
+		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + this.getName() + "] Richiesto HolographicDisplays!");
 			WildCommons.pauseThread(10000);
 			Bukkit.shutdown();
 			return;
 		}
-		
-		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + this.getName() + "] Richiesto HolographicDisplays!");
+
+		if (!Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + this.getName() + "] Richiesto Citizens!");
 			WildCommons.pauseThread(10000);
 			Bukkit.shutdown();
 			return;
@@ -148,6 +152,9 @@ public class PvPGames extends JavaPlugin {
 		if (Bukkit.getPluginManager().isPluginEnabled("WildChat")) {
 			wildChat = true;
 		}
+
+		holographicDisplaysAPI = HolographicDisplaysAPI.get(this);
+
 		
 		// Configurazione
 		try {
@@ -311,15 +318,8 @@ public class PvPGames extends JavaPlugin {
 		new NoKitCheckerTimer().startNewTask();
 				
 		for (final Mode mode : modesFile.getAllModes()) {
-			HologramsAPI.registerPlaceholder(this, "{modeplayers_" + mode.getId() + "}", 1.0, new PlaceholderReplacer() {
-				
-				@Override
-				public String update() {
-					return Integer.toString(mode.getCurrentPlayers().size());
-				}
-			});
-			
 			mode.updateJoinMob();
+			modesById.put(mode.getId().toLowerCase(), mode);
 		}
 	}
 	
@@ -395,7 +395,9 @@ public class PvPGames extends JavaPlugin {
 		}
 		return null;
 	}
-	
+	public Mode getModeById(String id) {
+		return modesById.get(id.toLowerCase());
+	}
 	public static PvPGamer getPvPGamer(Player bukkitPlayer) {
 		if (bukkitPlayer == null) {
 			return null;

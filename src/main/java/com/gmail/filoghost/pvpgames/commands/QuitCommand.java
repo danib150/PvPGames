@@ -72,7 +72,7 @@ public class QuitCommand extends CommandFramework implements SilentCommandHandle
 		pvpGamer.getPlayer().updateInventory();
 		
 		pvpGamer.sendMessage(ChatColor.GREEN + "Sei uscito dalla modalità " + oldMode.getName() + ".");
-		EasySound.quickPlay(pvpGamer.getPlayer(), Sound.BLOCK_NOTE_BASS);
+		EasySound.quickPlay(pvpGamer.getPlayer(), Sound.NOTE_BASS);
 	}
 	
 	@Override

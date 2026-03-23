@@ -35,6 +35,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.gmail.filoghost.boosters.bridges.BoostersBridge;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -56,9 +57,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import wild.api.WildCommons;
 import wild.api.WildConstants;
-import wild.api.bridges.BoostersBridge;
-import wild.api.bridges.BoostersBridge.Booster;
-import wild.api.bridges.CosmeticsBridge;
 import wild.api.sound.EasySound;
 import wild.api.world.SpectatorAPI;
 
@@ -300,7 +298,7 @@ public class PvPGamer {
 		
 		exp.addAndGet(mode.getKillExp());
 
-		EasySound.quickPlay(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+		EasySound.quickPlay(player, Sound.ORB_PICKUP);
 		currentKillstreak++;
 		
 		if (currentKillstreak > bestKillstreak.get()) {
@@ -356,7 +354,7 @@ public class PvPGamer {
 		} // Fine esecuzione killstreak
 		
 		// Dopo perché i coins possono cambiare
-		Booster booster = BoostersBridge.getActiveBooster(PvPGames.PLUGIN_ID);
+		BoostersBridge.Booster booster = BoostersBridge.getActiveBooster(PvPGames.PLUGIN_ID);
 		
 		int earnedCoins = 0;
 		if (mode.isEnableCoins()) {
@@ -386,7 +384,7 @@ public class PvPGamer {
 		if (oldLevel != level) {
 			// Level up!
 			SidebarManager.setLevel(player, level);
-			EasySound.quickPlay(player, Sound.ENTITY_PLAYER_LEVELUP, 1.5F);
+			EasySound.quickPlay(player, Sound.LEVEL_UP, 1.5F);
 			sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "LIVELLO SUCCESSIVO!" + ChatColor.GRAY + " Sei ora al livello " + ChatColor.WHITE + ChatColor.BOLD + levelInfo.getLevel() + ChatColor.GRAY + ".");
 		}
 
@@ -575,7 +573,7 @@ public class PvPGamer {
 					giveSpectatorStuff();
 				}
 				TagsManager.setGhost(player);
-				player.setCollidable(false);
+				player.spigot().setCollidesWithEntities(false);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0), true);
 				player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0), true);
 				SpectatorAPI.setSpectator(player);
@@ -588,7 +586,7 @@ public class PvPGamer {
 				}
 				
 				TagsManager.setGamer(player);
-				player.setCollidable(true);
+				player.spigot().setCollidesWithEntities(true);
 				SpectatorAPI.removeSpectator(player);
 				break;
 		}
@@ -601,15 +599,11 @@ public class PvPGamer {
 	
 	public void giveSpawnStuff() {
 		player.getInventory().setItem(4, PvPGames.getBookTutorial().getItemStack());
-		CosmeticsBridge.giveCosmeticsItems(player.getInventory());
-		CosmeticsBridge.updateCosmetics(player, CosmeticsBridge.Status.LOBBY); // Per forza qui siamo nello status lobby se gli vengono dati gli oggetti della lobby
-
 	}
 	
 	public void giveSpectatorStuff() {
 		player.getInventory().setItem(0, compass);
 		player.getInventory().setItem(8, WildConstants.Spectator.QUIT_SPECTATING);
-		CosmeticsBridge.updateCosmetics(player, CosmeticsBridge.Status.SPECTATOR); // Per forza qui siamo nello status spectator se gli vengono dati gli oggetti dello spectator
 	}
 	
 	public void updateSavedKit(String id, SavedKit value) {

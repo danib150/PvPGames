@@ -59,7 +59,7 @@ public class NoKitCheckerTimer extends TimerMaster {
 						pvpGamer.getPlayer().teleport(warpLoc);
 						pvpGamer.cleanInventoryAndPotions(GameMode.SURVIVAL);
 						pvpGamer.giveSpawnStuff();
-						EasySound.quickPlay(pvpGamer.getPlayer(), Sound.BLOCK_NOTE_BASS);
+						EasySound.quickPlay(pvpGamer.getPlayer(), Sound.NOTE_BASS);
 						pvpGamer.sendMessage(ChatColor.RED + "Non puoi stare in questa zona senza un kit.");
 					}
 				}

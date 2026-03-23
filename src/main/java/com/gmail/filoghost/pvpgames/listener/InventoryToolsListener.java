@@ -41,6 +41,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import wild.api.WildCommons;
@@ -65,28 +66,27 @@ public class InventoryToolsListener implements Listener {
 			if (mat == Material.MUSHROOM_SOUP) {
 				final Player player = event.getPlayer();
 				
-				if (((Damageable) player).getHealth() >= ((Damageable) player).getMaxHealth()) {
+				if (player.getHealth() >= player.getMaxHealth()) {
 					return;
 				}
-				
-				if (event.getItem().getAmount() <= 1) {
+
+				ItemStack item = event.getItem();
+
+				if (item.getAmount() <= 1) {
 					new BukkitRunnable() {
-						
+
 						@Override
 						public void run() {
-							if (event.getHand() == EquipmentSlot.HAND) {
-								player.getInventory().setItemInMainHand(null);
-							} else {
-								player.getInventory().setItemInOffHand(null);
-							}
+							player.setItemInHand(null); // 1.8.8 method
 						}
+
 					}.runTask(PvPGames.getInstance());
 				} else {
-					event.getItem().setAmount(event.getItem().getAmount() - 1);
+					item.setAmount(item.getAmount() - 1);
 				}
-				
+
 				WildCommons.heal(player, 8);
-				EasySound.quickPlay(player, Sound.BLOCK_GRASS_BREAK, 1f, 2f);
+				EasySound.quickPlay(player, Sound.DIG_GRASS, 1f, 2f);
 				Location loc = player.getLocation();
 				Particle.iconCrack(Material.MUSHROOM_SOUP, player.getWorld(), (float) loc.getX(), (float) loc.getY() + 1.4f, (float) loc.getZ(), 0.6f, 0.6f, 0.6f, 0.1f, 60);
 				

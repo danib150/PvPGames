@@ -32,8 +32,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.Option;
-import org.bukkit.scoreboard.Team.OptionStatus;
 
 public class TagsManager {
 
@@ -49,12 +47,13 @@ public class TagsManager {
 		
 		ghostsTeam1 = createTeamSafe(scoreboard1, "ghostsTeam");
 		ghostsTeam1.setPrefix(ChatColor.DARK_GRAY + "");
-		ghostsTeam1.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+
+		//ghostsTeam1.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
 		ghostsTeam1.setCanSeeFriendlyInvisibles(true);
 		
 		ghostsTeam2 = createTeamSafe(scoreboard2, "ghostsTeam");
 		ghostsTeam2.setPrefix(ChatColor.DARK_GRAY + "");
-		ghostsTeam2.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+		//ghostsTeam2.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
 		ghostsTeam2.setCanSeeFriendlyInvisibles(true);
 	}
 	

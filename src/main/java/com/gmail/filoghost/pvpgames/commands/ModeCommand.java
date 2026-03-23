@@ -81,7 +81,7 @@ public class ModeCommand extends CommandFramework implements SilentCommandHandle
 								pvpGamer.sendMessage(ChatColor.GRAY + "Hai scelto la modalità " + ChatColor.AQUA + ChatColor.BOLD + mode.getName() + ChatColor.GRAY + ".");
 								pvpGamer.teleportDismount(mode.getWarpLocation());
 								pvpGamer.giveSpawnStuff();
-								EasySound.quickPlay(pvpGamer.getPlayer(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.4f);
+								EasySound.quickPlay(pvpGamer.getPlayer(), Sound.ORB_PICKUP, 1.4f);
 							}
 						});
 					}
