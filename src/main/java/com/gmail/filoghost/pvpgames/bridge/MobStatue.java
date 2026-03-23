@@ -6,6 +6,7 @@ import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -70,7 +71,7 @@ public class MobStatue {
 			hologram = PvPGames.getInstance().getHolographicDisplaysAPI().createHologram(hologramLocation);
 
 			for (String line : hologramLines) {
-				hologram.getLines().appendText(line);
+				hologram.getLines().appendText(PlaceholderAPI.setPlaceholders(null, line));
 			}
 		}
 	}
@@ -100,7 +101,7 @@ public class MobStatue {
 
 	private double getHologramOffset(EntityType type) {
         return switch (type) {
-            case PLAYER, ZOMBIE, SKELETON, CREEPER -> 2.2;
+            case PLAYER, ZOMBIE, SKELETON, CREEPER -> 2.6;
             case ENDERMAN -> 2.9;
             case SLIME, MAGMA_CUBE -> 1.8;
             case GIANT -> 6.5;

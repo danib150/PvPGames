@@ -2,7 +2,7 @@ name: PvPGames
 main: com.gmail.filoghost.pvpgames.PvPGames
 version: 1.0
 
-softdepend: [WildCommons, WildChat, Cosmetics, HolographicMobs, HolographicDisplays, NametagChanger]
+softdepend: [WildCommons, WildChat, PlaceholderAPI, Citizens, HolographicDisplays, NametagChanger]
 
 commands:
    spawn:

@@ -90,6 +90,7 @@ public class Kit {
 	
 
 	public Kit(PluginConfig config) {
+		statue = new MobStatue();
 		statue.setType(EntityType.ZOMBIE);
 		statue.setHologramLines(new ArrayList<>());
 		statue.setClickHandler(player -> {

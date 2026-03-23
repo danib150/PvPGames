@@ -36,6 +36,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.gmail.filoghost.boosters.bridges.BoostersBridge;
+import com.gmail.filoghost.pvpgames.listener.*;
+import com.gmail.filoghost.pvpgames.placeholder.ModePlayerExpansion;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -66,14 +69,6 @@ import com.gmail.filoghost.pvpgames.files.WarpsFile;
 import com.gmail.filoghost.pvpgames.hud.menu.TeleporterMenu;
 import com.gmail.filoghost.pvpgames.hud.sidebar.SidebarManager;
 import com.gmail.filoghost.pvpgames.hud.tags.TagsManager;
-import com.gmail.filoghost.pvpgames.listener.ChatListener;
-import com.gmail.filoghost.pvpgames.listener.DamageListener;
-import com.gmail.filoghost.pvpgames.listener.DeathListener;
-import com.gmail.filoghost.pvpgames.listener.InventoryToolsListener;
-import com.gmail.filoghost.pvpgames.listener.JoinQuitListener;
-import com.gmail.filoghost.pvpgames.listener.LastDamageCauseListener;
-import com.gmail.filoghost.pvpgames.listener.SignListener;
-import com.gmail.filoghost.pvpgames.listener.StrengthFixListener;
 import com.gmail.filoghost.pvpgames.listener.protection.BlockListener;
 import com.gmail.filoghost.pvpgames.listener.protection.EntityListener;
 import com.gmail.filoghost.pvpgames.listener.protection.WeatherListener;
@@ -148,7 +143,15 @@ public class PvPGames extends JavaPlugin {
 			Bukkit.shutdown();
 			return;
 		}
-		
+		if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + this.getName() + "] Richiesto PlaceholderAPI!");
+			WildCommons.pauseThread(10000);
+			Bukkit.shutdown();
+			return;
+		}
+
+		new ModePlayerExpansion().register();
+
 		if (Bukkit.getPluginManager().isPluginEnabled("WildChat")) {
 			wildChat = true;
 		}
@@ -303,6 +306,7 @@ public class PvPGames extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new SignListener(), this);
 		Bukkit.getPluginManager().registerEvents(new StrengthFixListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DamageListener(), this);
+		Bukkit.getPluginManager().registerEvents(new CitizensListener(), this);
 		
 		// Clean up entry vecchie
 		new BukkitRunnable() {

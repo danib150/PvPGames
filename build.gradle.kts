@@ -69,5 +69,5 @@ dependencies {
     compileOnly("app.ashcon:sportpaper:1.8.8-R0.1-SNAPSHOT")
     compileOnly("it.danielebruni.wildadventure:wildcommons-core:1.0.1")
     compileOnly("io.github.danib150:boosters:1.0-SNAPSHOT")
-    implementation("net.citizensnpcs:citizensapi:2.0.41-SNAPSHOT")
+    implementation("net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT")
 }

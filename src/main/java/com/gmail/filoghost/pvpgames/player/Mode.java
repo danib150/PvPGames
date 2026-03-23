@@ -103,6 +103,7 @@ public class Mode {
 
 		joinMob = new MobStatue();
 		joinMob.setType(EntityType.SKELETON);
+
 		joinMob.setHologramLines(Arrays.asList(
 				WildCommons.color(PvPGames.getSettings().statues_modeCustomName)
 						.replace("[NAME]", name)
